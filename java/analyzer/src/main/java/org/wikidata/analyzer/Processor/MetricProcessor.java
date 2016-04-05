@@ -1,25 +1,44 @@
 package main.java.org.wikidata.analyzer.Processor;
 
 import com.google.common.collect.Iterators;
+import org.json.simple.JSONObject;
 import org.wikidata.wdtk.datamodel.interfaces.*;
 
+import java.io.*;
 import java.util.*;
 
 /**
  * @author Addshore
  */
-public class MetricProcessor implements EntityDocumentProcessor {
+public class MetricProcessor extends WikidataAnalyzerProcessor {
 
-    private Map<String, Long> counters;
+    private Map<String, Long> counters = new HashMap<>();
 
     private Map<String, String> wikimedias = new HashMap<>();
 
     private List<String> referenceProperties = new ArrayList<>();
 
-    public MetricProcessor(Map<String, Long> counters) {
-        this.counters = counters;
+    public MetricProcessor() {
+        super();
         this.populateWikimedias();
         this.populateReferenceProperties();
+    }
+
+    public void overrideCounters( Map<String, Long> counters ) {
+        this.counters = counters;
+    }
+
+    public boolean tearDown() {
+        try {
+            File metricsJsonFile = new File(outputDir.getAbsolutePath() + File.separator + "metrics.json");
+            BufferedWriter metricsJsonWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(metricsJsonFile)));
+            new JSONObject(this.counters).writeJSONString(metricsJsonWriter);
+            metricsJsonWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
     }
 
     /**

@@ -1,7 +1,9 @@
 package main.java.org.wikidata.analyzer.Processor;
 
+import org.json.simple.JSONObject;
 import org.wikidata.wdtk.datamodel.interfaces.*;
 
+import java.io.*;
 import java.util.*;
 
 /**
@@ -11,12 +13,33 @@ import java.util.*;
  *
  * @author Addshore
  */
-public class MonolingualTextProcessor implements EntityDocumentProcessor {
+public class MonolingualTextProcessor extends WikidataAnalyzerProcessor {
 
     private Map<String, Long> counters;
 
-    public MonolingualTextProcessor(Map<String, Long> counters) {
+    public MonolingualTextProcessor() {
+        super();
+    }
+
+    public void overrideCounters( Map<String, Long> counters ) {
         this.counters = counters;
+    }
+
+    public void setUp( ) {
+        this.counters = new HashMap<>();
+    }
+
+    public boolean tearDown() {
+        try {
+            File jsonFile = new File(this.outputDir.getAbsolutePath() + File.separator + "monotext.json");
+            BufferedWriter jsonWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(jsonFile)));
+            new JSONObject(this.counters).writeJSONString(jsonWriter);
+            jsonWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
     }
 
     private void increment(String counter) {

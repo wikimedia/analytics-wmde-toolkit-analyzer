@@ -2,12 +2,14 @@ package main.java.org.wikidata.analyzer.Processor;
 
 import org.wikidata.wdtk.datamodel.interfaces.*;
 
+import java.io.File;
+
 /**
  * This processor simply outputs status lines to the console.
  *
  * @author Addshore
  */
-public class NoisyProcessor implements EntityDocumentProcessor {
+public class NoisyProcessor extends WikidataAnalyzerProcessor {
 
     private int itemCount = 0;
     private int propertyCount = 0;

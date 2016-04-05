@@ -24,7 +24,8 @@ public class MetricProcessorTest extends TestCase {
 
     public void testProcessItemDocument() throws Exception {
         Map<String, Long> counters = new HashMap<>();
-        MetricProcessor processor = new MetricProcessor(counters);
+        MetricProcessor processor = new MetricProcessor();
+        processor.overrideCounters( counters );
 
         ItemIdValue id = ItemIdValueImpl.create("Q42", "foo");
         ItemDocument doc = ItemDocumentBuilder.forItemId(id)

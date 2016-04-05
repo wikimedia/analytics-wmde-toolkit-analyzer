@@ -13,20 +13,49 @@ import java.util.*;
  *
  * @author Addshore
  */
-public class MapProcessor implements EntityDocumentProcessor {
+public class MapProcessor extends WikidataAnalyzerProcessor {
 
-    private JSONObject geoDataOut;
-    private JSONObject graphOut;
+    private JSONObject geoDataOut = new JSONObject();
+    private JSONObject graphOut = new JSONObject();
 
     private PropertyIdValue coordinateLocation = PropertyIdValueImpl.create("P625", "http://www.wikidata.org/entity/");
 
     // This list is filled in the constructor
     private List<String> graphRelations = new ArrayList<>();
 
-    public MapProcessor(JSONObject geoData, JSONObject graph) throws IOException {
-        this.geoDataOut = geoData;
-        this.graphOut = graph;
+    public MapProcessor() {
+        this.populateGraphRelations();
+    }
 
+    public boolean tearDown() {
+        boolean success = true;
+
+        System.out.println("Writing map wdlabel.json");
+        File mapLabelFile = new File(outputDir.getAbsolutePath() + File.separator + "wdlabel.json");
+        try {
+            BufferedWriter mapLabelWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(mapLabelFile)));
+            this.geoDataOut.writeJSONString(mapLabelWriter);
+            mapLabelWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+            success = false;
+        }
+
+        System.out.println("Writing map graph.json");
+        File mapGraphFile = new File(outputDir.getAbsolutePath() + File.separator + "graph.json");
+        try {
+            BufferedWriter mapGraphWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(mapGraphFile)));
+            this.graphOut.writeJSONString(mapGraphWriter);
+            mapGraphWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+            success = false;
+        }
+
+        return success;
+    }
+
+    public void populateGraphRelations() {
         // Fill the list of graphRelations
         // The previous script actually generated graph data for ALL properties
         this.graphRelations.add("P17");// Country

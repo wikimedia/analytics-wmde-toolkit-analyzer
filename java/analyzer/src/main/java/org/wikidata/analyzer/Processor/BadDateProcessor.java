@@ -10,16 +10,57 @@ import java.util.*;
  *
  * @author Addshore
  */
-public class BadDateProcessor implements EntityDocumentProcessor {
+public class BadDateProcessor extends WikidataAnalyzerProcessor {
 
     private Writer writer1;
     private Writer writer2;
 
-    public BadDateProcessor(Writer writer1, Writer writer2) throws IOException {
+    public BadDateProcessor() {
+        super();
+    }
+
+    public void overrideWriters( Writer writer1, Writer writer2 ) {
         this.writer1 = writer1;
-        this.writer1.write("Dates marked as Julian that are more precise than year\n----\n");
         this.writer2 = writer2;
-        this.writer2.write("Dates marked as gregorian, before 1584\n----\n");
+        this.addHeadersToWriters();
+    }
+
+    public void setUp() {
+        File list1 = new File(outputDir.getAbsolutePath() + File.separator + "date_list1.txt");
+        File list2 = new File(outputDir.getAbsolutePath() + File.separator + "date_list2.txt");
+
+        try {
+            writer1 = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(list1)));
+            writer2 = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(list2)));
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
+
+        this.addHeadersToWriters();
+    }
+
+    private void addHeadersToWriters() {
+        try {
+            writer1.write("Dates marked as Julian that are more precise than year\n----\n");
+            writer2.write("Dates marked as gregorian, before 1584\n----\n");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public boolean tearDown() {
+        try {
+            writer1.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try {
+            writer2.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return true;
     }
 
     @Override

@@ -32,7 +32,8 @@ public class BadDateProcessorTest extends TestCase {
         EasyMock.replay(writer1);
         EasyMock.replay(writer2);
 
-        new BadDateProcessor(writer1, writer2);
+        BadDateProcessor proc = new BadDateProcessor();
+        proc.overrideWriters( writer1, writer2 );
 
         EasyMock.verify(writer1);
         EasyMock.verify(writer2);
@@ -50,7 +51,8 @@ public class BadDateProcessorTest extends TestCase {
         EasyMock.replay(writer1);
         EasyMock.replay(writer2);
 
-        EntityDocumentProcessor proc = new BadDateProcessor(writer1, writer2);
+        BadDateProcessor proc = new BadDateProcessor();
+        proc.overrideWriters( writer1, writer2 );
 
         ItemIdValue id = ItemIdValueImpl.create("Q42", "foo");
         ItemDocument doc = ItemDocumentBuilder.forItemId(id)
@@ -82,7 +84,8 @@ public class BadDateProcessorTest extends TestCase {
         EasyMock.replay(writer1);
         EasyMock.replay(writer2);
 
-        EntityDocumentProcessor proc = new BadDateProcessor(writer1, writer2);
+        BadDateProcessor proc = new BadDateProcessor();
+        proc.overrideWriters( writer1, writer2 );
 
         ItemIdValue id = ItemIdValueImpl.create("Q42", "foo");
         ItemDocument doc = ItemDocumentBuilder.forItemId(id)
@@ -114,7 +117,8 @@ public class BadDateProcessorTest extends TestCase {
         EasyMock.replay(writer1);
         EasyMock.replay(writer2);
 
-        EntityDocumentProcessor proc = new BadDateProcessor(writer1, writer2);
+        BadDateProcessor proc = new BadDateProcessor();
+        proc.overrideWriters( writer1, writer2 );
 
         ItemIdValue id = ItemIdValueImpl.create("Q42", "foo");
         ItemDocument doc = ItemDocumentBuilder.forItemId(id)

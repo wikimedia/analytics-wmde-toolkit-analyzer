@@ -25,7 +25,8 @@ public class MonolingualTextProcessorTest extends TestCase {
 
     public void testProcessItemDocument() throws Exception {
         Map<String, Long> counters = new HashMap<>();
-        MonolingualTextProcessor processor = new MonolingualTextProcessor(counters);
+        MonolingualTextProcessor processor = new MonolingualTextProcessor();
+        processor.overrideCounters( counters );
 
         ItemIdValue itemId = ItemIdValueImpl.create("Q42", "foo");
         ItemDocument itemDocument = ItemDocumentBuilder.forItemId(itemId)
@@ -35,6 +36,7 @@ public class MonolingualTextProcessorTest extends TestCase {
                                 .withValue(Datamodel.makeMonolingualTextValue("text", "en"))
                                 .withQualifier(Datamodel.makeValueSnak(PropertyIdValueImpl.create("P1", "bar"), Datamodel.makeMonolingualTextValue("text", "de")))
                                 .withQualifier(Datamodel.makeValueSnak(PropertyIdValueImpl.create("P1", "bar"), Datamodel.makeMonolingualTextValue("text", "fr")))
+
                                 .withReference(ReferenceBuilder.newInstance().withPropertyValue(
                                         PropertyIdValueImpl.create("P2", "Foo"),
                                         Datamodel.makeMonolingualTextValue("text", "fr")
