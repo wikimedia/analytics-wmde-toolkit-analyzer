@@ -74,6 +74,8 @@ public class MetricProcessorTest extends TestCase {
         this.assertCounter(counters, "references.snaks.type.value", 2 );
         this.assertCounter(counters, "references.snaks.type.somevalue", 1 );
         this.assertCounter(counters, "references.snaks.type.novalue", 2 );
+        this.assertCounter(counters, "item.count", 1 );
+        this.assertCounter(counters, "item.statements.total", 3 );
     }
 
 }

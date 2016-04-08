@@ -360,12 +360,17 @@ public class MetricProcessor extends WikidataAnalyzerProcessor {
 
     public void processItemDocument(ItemDocument document) {
         if (document != null) {
+            this.increment("item.count");
+            this.increment("item.statements.total", Iterators.size( document.getAllStatements() ));
             this.processStatementDocument(document);
         }
     }
 
     public void processPropertyDocument(PropertyDocument document) {
-        //Look for nothing
+        if (document != null) {
+            this.increment("property.count");
+            this.increment("property.statements.total", Iterators.size( document.getAllStatements() ));
+        }
     }
 
     private void processStatementDocument(StatementDocument document) {
@@ -376,9 +381,6 @@ public class MetricProcessor extends WikidataAnalyzerProcessor {
     }
 
     private void processStatement(Statement statement) {
-        Snak mainSnak = statement.getClaim().getMainSnak();
-        String propertyString = mainSnak.getPropertyId().getId();
-
         this.increment("qualifiers", Iterators.size(statement.getClaim().getAllQualifiers()));
         this.increment("references", statement.getReferences().size());
 
