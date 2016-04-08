@@ -29,6 +29,14 @@ public class MetricProcessor extends WikidataAnalyzerProcessor {
     }
 
     public boolean tearDown() {
+        // Quickly work out the average statements per item & property
+        // TODO stuff like this should probably be in a different method (easier testing)..
+        this.initiateCounterIfNotReady("item.statements.avg");
+        this.initiateCounterIfNotReady("property.statements.avg");
+        this.counters.put("item.statements.avg", this.counters.get("item.statements.total") / this.counters.get("item.count"));
+        this.counters.put("property.statements.avg", this.counters.get("property.statements.total") / this.counters.get("property.count"));
+
+        // And then do the real tearDown
         try {
             File metricsJsonFile = new File(outputDir.getAbsolutePath() + File.separator + "metrics.json");
             BufferedWriter metricsJsonWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(metricsJsonFile)));
