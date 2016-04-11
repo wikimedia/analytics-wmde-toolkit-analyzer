@@ -6,14 +6,15 @@ import org.wikidata.wdtk.dumpfiles.wmf.JsonOnlineDumpFile;
 import org.wikidata.wdtk.util.DirectoryManager;
 import org.wikidata.wdtk.util.DirectoryManagerImpl;
 import org.wikidata.wdtk.util.WebResourceFetcher;
-import org.wikidata.wdtk.util.WebResourceFetcherImpl;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Addshore
@@ -74,22 +75,35 @@ public class DumpFetcher {
                 Paths.get(this.dataDirectory.getAbsolutePath() + File.separator + "dumpfiles"),
                 false
         );
-        WebResourceFetcher fetcher = new WebResourceFetcherImpl();
+        WebResourceFetcher fetcher = new RedirectFollowingWebResourceFetcherImpl();
 
-        // Try a dump from dumps.wikimedia.org
-        JsonOnlineDumpFile onlineDumpFile = new JsonOnlineDumpFile(
-                dumpDate,
-                "wikidatawiki",
-                fetcher,
-                localDirectoryManager
+        // List the online dumps
+        Map<String, MwDumpFile> onlineDumpMap = new HashMap<String, MwDumpFile>();
+        // dumps.wikimedia.org
+        onlineDumpMap.put(
+                "dumps.wikimedia.org",
+                new JsonOnlineDumpFile(dumpDate, "wikidatawiki", fetcher, localDirectoryManager)
         );
-        try{
-            onlineDumpFile.prepareDumpFile();
-        } catch ( IOException exception ) {
-            throw new IOException("Failed to get dump from any sources");
+        onlineDumpMap.put(
+                "archive.org",
+                new ArchiveOrgJsonOnlineDumpFile(dumpDate, "wikidatawiki", fetcher, localDirectoryManager)
+        );
+
+        // Try the online dumps
+        for ( Map.Entry<String, MwDumpFile> entry : onlineDumpMap.entrySet() ) {
+            String dumpLocation = entry.getKey();
+            MwDumpFile onlineDump = entry.getValue();
+            try{
+                System.out.println("Looking for / downloading online dump from: " + dumpLocation);
+                onlineDump.prepareDumpFile();
+                System.out.println("Using dump from: " + dumpLocation);
+                return onlineDump;
+            } catch ( IOException exception ) {
+                // Ignore the exception so we can try the next online dump
+            }
         }
 
-        System.out.println("Using online dump file");
-        return onlineDumpFile;
+        // Everything failed! :(
+        throw new IOException("Failed to get dump from any sources");
     }
 }
