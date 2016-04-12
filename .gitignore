@@ -1,0 +1,10 @@
+#Directories
+.idea
+lib
+out
+target
+data
+
+#Files
+*.iml
+*.class
