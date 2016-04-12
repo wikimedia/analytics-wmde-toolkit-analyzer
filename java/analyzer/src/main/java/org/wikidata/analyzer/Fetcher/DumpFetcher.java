@@ -36,24 +36,37 @@ public class DumpFetcher {
      */
     public MwDumpFile getDump( String dumpDate ) throws IOException {
         System.out.println("Getting dump with date " + dumpDate);
+
         // Look for the dump in a list of possible local locations
-        List<String> locationList = new ArrayList<>();
+        List<String> directoryList = new ArrayList<>();
         //Local data dir location
-        locationList.add(this.dataDirectory + "/dumpfiles/json-" + dumpDate + "/" + dumpDate + "-all.json.gz");
+        directoryList.add(this.dataDirectory + "/dumpfiles/json-" + dumpDate + "/");
         //Labs dump location
-        locationList.add("/public/dumps/public/wikidatawiki/entities/" + dumpDate + "/wikidata-" + dumpDate + "-all.json.gz");
+        directoryList.add("/public/dumps/public/wikidatawiki/entities/" + dumpDate + "/");
         //Stat1002 dump location
-        locationList.add("/mnt/data/xmldatadumps/public/wikidatawiki/entities/" + dumpDate + "/wikidata-" + dumpDate + "-all.json.gz");
-        for (String dumpLocation: locationList) {
-            System.out.println("Trying dump file from: " + dumpLocation);
-            if (Files.exists(Paths.get(dumpLocation)) && Files.isReadable(Paths.get(dumpLocation))) {
-                MwLocalDumpFile localDumpFile = new MwLocalDumpFile( dumpLocation );
-                if( localDumpFile.isAvailable() ) {
-                    System.out.println("Using dump file from: " + dumpLocation);
-                    localDumpFile.prepareDumpFile();
-                    return localDumpFile;
+        directoryList.add("/mnt/data/xmldatadumps/public/wikidatawiki/entities/" + dumpDate + "/");
+
+        for (String dumpDirectory: directoryList) {
+            System.out.println("Looking for dump files in: " + dumpDirectory);
+
+            // Try and few different file names
+            List<String> fileList = new ArrayList<>();
+            fileList.add(dumpDirectory + dumpDate + ".json.gz");
+            fileList.add(dumpDirectory + dumpDate + "-all.json.gz");
+            fileList.add(dumpDirectory + "wikidata-" + dumpDate + ".json.gz");
+            fileList.add(dumpDirectory + "wikidata-" + dumpDate + "-all.json.gz");
+
+            for (String dumpLocation: fileList) {
+                if (Files.exists(Paths.get(dumpLocation)) && Files.isReadable(Paths.get(dumpLocation))) {
+                    MwLocalDumpFile localDumpFile = new MwLocalDumpFile( dumpLocation );
+                    if( localDumpFile.isAvailable() ) {
+                        System.out.println("Using dump file from: " + dumpLocation);
+                        localDumpFile.prepareDumpFile();
+                        return localDumpFile;
+                    }
                 }
             }
+
         }
 
         // Get ready to try online dumps

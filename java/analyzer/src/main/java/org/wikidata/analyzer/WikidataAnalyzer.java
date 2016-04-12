@@ -7,8 +7,6 @@ import org.wikidata.wdtk.dumpfiles.DumpProcessingController;
 import org.wikidata.wdtk.dumpfiles.MwDumpFile;
 
 import java.io.*;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
 import java.util.*;
 
@@ -59,7 +57,6 @@ public class WikidataAnalyzer {
      */
     public void run( String[] args ) {
         this.printHeader();
-        this.printMemoryWarning();
 
         long startTime = System.currentTimeMillis();
 
@@ -76,9 +73,17 @@ public class WikidataAnalyzer {
     }
 
     private void printHeader() {
-        System.out.println("******************************************");
-        System.out.println("*** Wikidata Toolkit: WikidataAnalyzer ***");
-        System.out.println("******************************************");
+        System.out.println("**************************************************************************************");
+        System.out.println("***                       Wikidata Toolkit: ToolkitAnalyzer                        ***");
+        System.out.println("********************************** Example  Usage ************************************");
+        System.out.println("* toolkit-analyzer.jar Metric ~/toolkit-analyzer/data latest                         *");
+        System.out.println("* toolkit-analyzer.jar Metric ~/toolkit-analyzer/data 20160104                       *");
+        System.out.println("* toolkit-analyzer.jar BadDate Map MonolingualTest ~/toolkit-analyzer/data 20150104  *");
+        System.out.println("******************************* Data Directory Layout ********************************");
+        System.out.println("* Data directory: data/                                                              *");
+        System.out.println("* Downloaded dump locations: data/dumpfiles/json-<DATE>/<DATE>-all.json.gz           *");
+        System.out.println("* Processor output location: data/<DATE>/                                            *");
+        System.out.println("**************************************************************************************");
     }
 
     private void printMemoryWarning() {
@@ -89,43 +94,44 @@ public class WikidataAnalyzer {
     }
 
     public void scan(String[] args) throws IOException {
-        // Get the target date
+        // Get the parameters
         try {
             targetDate = args[args.length - 1];
+            dataDir = new File(args[args.length - 2]);
         } catch (ArrayIndexOutOfBoundsException exception) {
             System.out.println("Error: Not enough parameters. You must pass a data dir and a target date!");
             System.exit(1);
         }
+
+        this.printMemoryWarning();
+
+        // Check the date
         if (targetDate.equals("latest")) {
             DumpDateFetcher dateFetcher = new DumpDateFetcher();
             targetDate = dateFetcher.getLatestOnlineDumpDate();
             System.out.println("Targeting latest dump: " + targetDate);
-        } else {
+        } else if (targetDate.matches("[0-9]+")) {
             System.out.println("Targeting dump from: " + targetDate);
+        } else {
+            System.out.println("Error: Date looks wrong. Must be in the format '20160101' or 'latest'.");
+            System.exit(1);
         }
-        args = Arrays.copyOf(args, args.length - 1);
 
-        // Get the data directory
-        try {
-            dataDir = new File(args[args.length - 1]);
-            if (!dataDir.exists()) {
-                System.out.println("Error: Data directory specified does not exist.");
-                System.exit(1);
-            }
-        } catch (ArrayIndexOutOfBoundsException exception) {
-            System.out.println("Error: Not enough parameters. You must pass a data dir and a target date!");
+        // Check the data directory
+        if (!dataDir.exists()) {
+            System.out.println("Error: Data directory specified does not exist.");
             System.exit(1);
         }
         System.out.println("Using data directory: " + dataDir.getAbsolutePath());
 
+        // And create the output directory if it doesn't already exist
         File outputDir = new File(dataDir.getAbsolutePath() + File.separator + targetDate);
         if (!outputDir.exists()) {
             Files.createDirectory( outputDir.toPath() );
         }
-        args = Arrays.copyOf(args, args.length - 1);
 
         // Get the list of processorClasses
-        for (String value : args) {
+        for (String value : Arrays.copyOf(args, args.length - 2)) {
             try {
                 processorClasses.add(Class.forName("main.java.org.wikidata.analyzer.Processor." + value + "Processor"));
             } catch (ClassNotFoundException e) {
