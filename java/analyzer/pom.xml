@@ -57,7 +57,7 @@
                             <goal>shade</goal>
                         </goals>
                         <configuration>
-                            <finalName>wikidata-analyzer</finalName>
+                            <finalName>toolkit-analyzer</finalName>
                             <!-- Minimization just does not work; removes many relevant classes -->
                             <minimizeJar>false</minimizeJar>
                             <createDependencyReducedPom>false</createDependencyReducedPom>
