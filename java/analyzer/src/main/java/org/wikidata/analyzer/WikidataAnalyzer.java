@@ -149,6 +149,7 @@ public class WikidataAnalyzer {
         for (Class<?> classObject : this.processorClasses) {
             try {
                 WikidataAnalyzerProcessor processor = (WikidataAnalyzerProcessor) classObject.newInstance();
+                processor.setOutputDir( outputDir );
                 processor.setUp();
                 controller.registerEntityDocumentProcessor(
                         processor,
