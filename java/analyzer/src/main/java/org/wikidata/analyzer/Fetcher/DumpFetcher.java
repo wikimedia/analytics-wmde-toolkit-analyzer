@@ -45,32 +45,38 @@ public class DumpFetcher {
         //Stat1002 dump location
         locationList.add("/mnt/data/xmldatadumps/public/wikidatawiki/entities/" + dumpDate + "/wikidata-" + dumpDate + "-all.json.gz");
         for (String dumpLocation: locationList) {
+            System.out.println("Trying dump file from: " + dumpLocation);
             if (Files.exists(Paths.get(dumpLocation)) && Files.isReadable(Paths.get(dumpLocation))) {
                 MwLocalDumpFile localDumpFile = new MwLocalDumpFile( dumpLocation );
                 if( localDumpFile.isAvailable() ) {
                     System.out.println("Using dump file from: " + dumpLocation);
+                    localDumpFile.prepareDumpFile();
                     return localDumpFile;
                 }
             }
         }
 
-        // Fallback to downloading the dump ourselves
+        // Get ready to try online dumps
         DirectoryManager localDirectoryManager = new DirectoryManagerImpl(
                 Paths.get(this.dataDirectory.getAbsolutePath() + File.separator + "dumpfiles"),
                 false
         );
         WebResourceFetcher fetcher = new WebResourceFetcherImpl();
+
+        // Try a dump from dumps.wikimedia.org
         JsonOnlineDumpFile onlineDumpFile = new JsonOnlineDumpFile(
                 dumpDate,
                 "wikidatawiki",
                 fetcher,
                 localDirectoryManager
         );
-        if (onlineDumpFile.isAvailable()) {
-            System.out.println("Using online dump file");
-            return onlineDumpFile;
+        try{
+            onlineDumpFile.prepareDumpFile();
+        } catch ( IOException exception ) {
+            throw new IOException("Failed to get dump from any sources");
         }
 
-        throw new IOException("Failed to get dump from any sources");
+        System.out.println("Using online dump file");
+        return onlineDumpFile;
     }
 }
