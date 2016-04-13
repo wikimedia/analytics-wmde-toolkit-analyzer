@@ -3,14 +3,11 @@ package org.wikidata.analyzer.Fetcher;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.wikidata.wdtk.util.WebResourceFetcher;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.net.URL;
-import java.net.URLConnection;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * @author Addshore
@@ -36,13 +33,8 @@ public class DumpDateFetcher {
      * @throws IOException
      */
     private String getJsonDumpsPageHtml() throws IOException {
-        URL url = new URL("http://dumps.wikimedia.org/other/wikidata");
-        URLConnection con = url.openConnection();
-        Pattern p = Pattern.compile("text/html;\\s+charset=([^\\s]+)\\s*");
-        Matcher m = p.matcher(con.getContentType());
-        /* If Content-Type doesn't match this pre-conception, choose default and hope for the best. */
-        String charset = m.matches() ? m.group(1) : "ISO-8859-1";
-        Reader r = new InputStreamReader(con.getInputStream(), charset);
+        WebResourceFetcher fetcher = new RedirectFollowingWebResourceFetcherImpl();
+        Reader r = new InputStreamReader(fetcher.getInputStreamForUrl("http://dumps.wikimedia.org/other/wikidata/"));
         StringBuilder buf = new StringBuilder();
         while (true) {
             int ch = r.read();

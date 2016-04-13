@@ -1,5 +1,6 @@
 package org.wikidata.analyzer;
 
+import org.apache.commons.cli.*;
 import org.wikidata.analyzer.Fetcher.DumpDateFetcher;
 import org.wikidata.analyzer.Fetcher.DumpFetcher;
 import org.wikidata.analyzer.Processor.NoisyProcessor;
@@ -15,16 +16,6 @@ import java.util.*;
  * @author Addshore
  */
 public class WikidataAnalyzer {
-
-    /**
-     * Folder that all data should be stored in
-     */
-    private File dataDir = null;
-
-    /**
-     * The target date string
-     */
-    private String targetDate;
 
     /**
      * A list of processorClasses that need to be run
@@ -44,47 +35,73 @@ public class WikidataAnalyzer {
      */
     public static void main(String[] args) throws IOException {
         WikidataAnalyzer analyzer = new WikidataAnalyzer();
-        analyzer.run(args);
+        analyzer.init(args);
     }
 
-    /**
-     * Main entry point of the WikidataAnalyzer class
-     *
-     * @param args Command line arguments
-     *             A collection of Processors to run (each as a single argument) eg. BadDate Map
-     *             The data directory to use eg. ~/data
-     *             The date of the dump to target eg. latest OR 20151230
-     *             eg. java -Xmx2g -jar ~/wikidata-analyzer.jar Reference ~/data latest
-     */
-    public void run( String[] args ) {
-        this.printHeader();
+    public void init( String[] args ) throws IOException {
+        Options options = new Options();
 
-        long startTime = System.currentTimeMillis();
+        options.addOption("h", "help", false, "Print help for the command");
+        options.addOption("d", "date", true, "Target date in format 20160104");
+        options.addOption("l", "latest", false, "Target the latest dump according to dumps.wikimedia.org");
+        options.addOption("s", "store", true, "Target storage directory (REQUIRED)");
+        options.addOption("p", "processors", true, "Processors to run (REQUIRED)");
 
         try {
-            this.scan(args);
-            System.out.println("All Done!");
-        } catch (IOException e) {
-            System.out.println("Something went wrong!");
-            e.printStackTrace();
-        }
+            CommandLineParser parser = new DefaultParser();
+            CommandLine cmd = parser.parse(options, args);
+            // Output help when help was requested
+            if (cmd.hasOption("help")) {
+                this.printHelpAndExit(options);
+            }
+            if (!cmd.hasOption("store")) {
+                this.printHelpAndExit(options, "Missing store option");
+            }
+            if (!cmd.hasOption("processors")) {
+                this.printHelpAndExit(options, "Missing processors option");
+            }
 
-        long elapsedSeconds = (System.currentTimeMillis() - startTime) / 1000;
-        System.out.println("Execution time: " + elapsedSeconds / 60 + ":" + elapsedSeconds % 60);
+            // Extract the other things
+            String targetDate = null;
+            if (cmd.hasOption("latest")) {
+                targetDate = "latest";
+            } else if (cmd.hasOption("date")) {
+                targetDate = cmd.getOptionValue("date");
+            } else {
+                this.printHelpAndExit(options, "Missing latest option or a date");
+            }
+            String dataDir = cmd.getOptionValue("store");
+            String[] processors = cmd.getOptionValues("processors");
+
+            this.run( targetDate, new File( dataDir ), processors );
+
+        } catch (ParseException e) {
+            this.printHelpAndExit( options, e.getMessage() );
+        }
+    }
+
+    private void printHelpAndExit( Options options ) {
+        this.printHelpAndExit( options, "" );
+    }
+
+    private void printHelpAndExit( Options options, String reason ) {
+        this.printHeader();
+        HelpFormatter formatter = new HelpFormatter();
+        formatter.printHelp("toolkit-analyzer", options);
+        if( !reason.equals("") ) {
+            System.out.println( "\n" + reason );
+        }
+        System.exit(1);
     }
 
     private void printHeader() {
-        System.out.println("**************************************************************************************");
-        System.out.println("***                       Wikidata Toolkit: ToolkitAnalyzer                        ***");
-        System.out.println("********************************** Example  Usage ************************************");
-        System.out.println("* toolkit-analyzer.jar Metric ~/toolkit-analyzer/data latest                         *");
-        System.out.println("* toolkit-analyzer.jar Metric ~/toolkit-analyzer/data 20160104                       *");
-        System.out.println("* toolkit-analyzer.jar BadDate Map MonolingualTest ~/toolkit-analyzer/data 20150104  *");
-        System.out.println("******************************* Data Directory Layout ********************************");
-        System.out.println("* Data directory: data/                                                              *");
-        System.out.println("* Downloaded dump locations: data/dumpfiles/json-<DATE>/<DATE>-all.json.gz           *");
-        System.out.println("* Processor output location: data/<DATE>/                                            *");
-        System.out.println("**************************************************************************************");
+        System.out.println("****************************************************************************");
+        System.out.println("***                       Wikidata Toolkit: ToolkitAnalyzer              ***");
+        System.out.println("******************************* Data Directory Layout **********************");
+        System.out.println("* Target storage directory : data/                                         *");
+        System.out.println("* Downloaded dump locations: data/dumpfiles/json-<DATE>/<DATE>-all.json.gz *");
+        System.out.println("* Processor output location: data/<DATE>/                                  *");
+        System.out.println("****************************************************************************");
     }
 
     private void printMemoryWarning() {
@@ -94,17 +111,8 @@ public class WikidataAnalyzer {
         }
     }
 
-    public void scan(String[] args) throws IOException {
-        // Get the parameters
-        try {
-            targetDate = args[args.length - 1];
-            dataDir = new File(args[args.length - 2]);
-        } catch (ArrayIndexOutOfBoundsException exception) {
-            System.out.println("Error: Not enough parameters. You must pass a data dir and a target date!");
-            System.exit(1);
-        }
-
-        this.printMemoryWarning();
+    public void run( String targetDate, File dataDir, String[] processors ) throws IOException {
+        this.printHeader();
 
         // Check the date
         if (targetDate.equals("latest")) {
@@ -131,8 +139,25 @@ public class WikidataAnalyzer {
             Files.createDirectory( outputDir.toPath() );
         }
 
+        long startTime = System.currentTimeMillis();
+
+        try {
+            this.scan(targetDate, dataDir, outputDir, processors);
+            System.out.println("All Done!");
+        } catch (IOException e) {
+            System.out.println("Something went wrong!");
+            e.printStackTrace();
+        }
+
+        long elapsedSeconds = (System.currentTimeMillis() - startTime) / 1000;
+        System.out.println("Execution time: " + elapsedSeconds / 60 + ":" + elapsedSeconds % 60);
+    }
+
+    public void scan( String targetDate, File dataDir, File outputDir, String[] processors ) throws IOException {
+        this.printMemoryWarning();
+
         // Get the list of processorClasses
-        for (String value : Arrays.copyOf(args, args.length - 2)) {
+        for (String value : processors) {
             try {
                 processorClasses.add(Class.forName("org.wikidata.analyzer.Processor." + value + "Processor"));
             } catch (ClassNotFoundException e) {
