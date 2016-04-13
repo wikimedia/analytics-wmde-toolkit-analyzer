@@ -134,7 +134,7 @@ public class WikidataAnalyzer {
         // Get the list of processorClasses
         for (String value : Arrays.copyOf(args, args.length - 2)) {
             try {
-                processorClasses.add(Class.forName("main.java.org.wikidata.analyzer.Processor." + value + "Processor"));
+                processorClasses.add(Class.forName("org.wikidata.analyzer.Processor." + value + "Processor"));
             } catch (ClassNotFoundException e) {
                 System.out.println("Error: " + value + "Processor not found");
                 System.exit(1);
