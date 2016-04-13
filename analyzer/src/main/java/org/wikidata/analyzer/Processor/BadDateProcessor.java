@@ -22,7 +22,6 @@ public class BadDateProcessor extends WikidataAnalyzerProcessor {
     public void overrideWriters(Writer writer1, Writer writer2) {
         this.writer1 = writer1;
         this.writer2 = writer2;
-        this.addHeadersToWriters();
     }
 
     public void setUp() {
@@ -37,10 +36,9 @@ public class BadDateProcessor extends WikidataAnalyzerProcessor {
             System.exit(1);
         }
 
-        this.addHeadersToWriters();
     }
 
-    private void addHeadersToWriters() {
+    public void doPreProcessing() {
         try {
             writer1.write("Dates marked as Julian that are more precise than year\n----\n");
             writer2.write("Dates marked as gregorian, before 1584\n----\n");

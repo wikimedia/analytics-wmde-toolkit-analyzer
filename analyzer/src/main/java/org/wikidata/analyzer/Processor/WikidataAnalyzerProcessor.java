@@ -30,7 +30,7 @@ public abstract class WikidataAnalyzerProcessor implements EntityDocumentProcess
 
     /**
      * Sets up the Processor.
-     * Show open files ready for writing etc.
+     * Should open files ready for writing etc.
      */
     public void setUp(){};
 
@@ -42,5 +42,19 @@ public abstract class WikidataAnalyzerProcessor implements EntityDocumentProcess
     public boolean tearDown(){
         return true;
     };
+
+    /**
+     * Should be called after setUp but before actual processing of entities takes place.
+     */
+    public void doPreProcessing() {
+    }
+
+    /**
+     * Should be called before tearDown but after actual processing of entities takes place.
+     * Could be used to calculate averages etc.
+     */
+    public void doPostProcessing() {
+
+    }
 
 }

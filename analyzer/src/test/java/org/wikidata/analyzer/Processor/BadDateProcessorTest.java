@@ -18,7 +18,7 @@ import java.io.*;
  */
 public class BadDateProcessorTest extends TestCase {
 
-    public void testProcessItemDocument_constructWrites() throws Exception {
+    public void testProcessItemDocument_preProcessingWrites() throws Exception {
         Writer writer1 = EasyMock.createMock(Writer.class);
         Writer writer2 = EasyMock.createMock(Writer.class);
 
@@ -32,6 +32,7 @@ public class BadDateProcessorTest extends TestCase {
 
         BadDateProcessor proc = new BadDateProcessor();
         proc.overrideWriters( writer1, writer2 );
+        proc.doPreProcessing();
 
         EasyMock.verify(writer1);
         EasyMock.verify(writer2);
@@ -40,11 +41,6 @@ public class BadDateProcessorTest extends TestCase {
     public void testProcessItemDocument_noMatches() throws Exception {
         Writer writer1 = EasyMock.createMock(Writer.class);
         Writer writer2 = EasyMock.createMock(Writer.class);
-
-        writer1.write("Dates marked as Julian that are more precise than year\n----\n");
-        EasyMock.expectLastCall();
-        writer2.write("Dates marked as gregorian, before 1584\n----\n");
-        EasyMock.expectLastCall();
 
         EasyMock.replay(writer1);
         EasyMock.replay(writer2);
@@ -72,10 +68,6 @@ public class BadDateProcessorTest extends TestCase {
         Writer writer1 = EasyMock.createMock(Writer.class);
         Writer writer2 = EasyMock.createMock(Writer.class);
 
-        writer1.write("Dates marked as Julian that are more precise than year\n----\n");
-        EasyMock.expectLastCall();
-        writer2.write("Dates marked as gregorian, before 1584\n----\n");
-        EasyMock.expectLastCall();
         writer1.write("someStatementGuid\n");
         EasyMock.expectLastCall();
 
@@ -105,10 +97,6 @@ public class BadDateProcessorTest extends TestCase {
         Writer writer1 = EasyMock.createMock(Writer.class);
         Writer writer2 = EasyMock.createMock(Writer.class);
 
-        writer1.write("Dates marked as Julian that are more precise than year\n----\n");
-        EasyMock.expectLastCall();
-        writer2.write("Dates marked as gregorian, before 1584\n----\n");
-        EasyMock.expectLastCall();
         writer2.write("someStatementGuid\n");
         EasyMock.expectLastCall();
 

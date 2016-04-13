@@ -7,6 +7,8 @@ import org.wikidata.wdtk.datamodel.implementation.ItemIdValueImpl;
 import org.wikidata.wdtk.datamodel.implementation.PropertyIdValueImpl;
 import org.wikidata.wdtk.datamodel.interfaces.ItemDocument;
 import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
+import org.wikidata.wdtk.datamodel.interfaces.PropertyDocument;
+import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -26,11 +28,11 @@ public class MetricProcessorTest extends TestCase {
         MetricProcessor processor = new MetricProcessor();
         processor.overrideCounters( counters );
 
-        ItemIdValue id = ItemIdValueImpl.create("Q42", "foo");
-        ItemDocument doc = ItemDocumentBuilder.forItemId(id)
+        ItemIdValue itemId = ItemIdValueImpl.create("Q42", "foo");
+        ItemDocument itemDoc = ItemDocumentBuilder.forItemId(itemId)
                 .withStatement(
                         StatementBuilder
-                                .forSubjectAndProperty(id, PropertyIdValueImpl.create("P1", "bar"))
+                                .forSubjectAndProperty(itemId, PropertyIdValueImpl.create("P1", "bar"))
                                 .withQualifier(Datamodel.makeValueSnak(PropertyIdValueImpl.create("P1", "bar"), Datamodel.makeStringValue("baz")))
                                 .withReference(ReferenceBuilder.newInstance().withNoValue(PropertyIdValueImpl.create("P143", "Foo")).build())
                                 .withReference(ReferenceBuilder.newInstance().withSomeValue(PropertyIdValueImpl.create("P99", "Foo")).build())
@@ -42,7 +44,7 @@ public class MetricProcessorTest extends TestCase {
                 )
                 .withStatement(
                         StatementBuilder
-                                .forSubjectAndProperty(id, PropertyIdValueImpl.create("P1", "bar"))
+                                .forSubjectAndProperty(itemId, PropertyIdValueImpl.create("P1", "bar"))
                                 .withQualifier(Datamodel.makeValueSnak(PropertyIdValueImpl.create("P1", "bar"), Datamodel.makeStringValue("baz")))
                                 .withQualifier(Datamodel.makeValueSnak(PropertyIdValueImpl.create("P1", "bar"), Datamodel.makeStringValue("baz")))
                                 .withReference(
@@ -57,12 +59,25 @@ public class MetricProcessorTest extends TestCase {
                 )
                 .withStatement(
                         StatementBuilder
-                        .forSubjectAndProperty(id, PropertyIdValueImpl.create("P100", "foo"))
+                        .forSubjectAndProperty(itemId, PropertyIdValueImpl.create("P100", "foo"))
                         .build()
                 )
                 .build();
 
-        processor.processItemDocument( doc );
+        PropertyIdValue propId = PropertyIdValueImpl.create("P166", "foo");
+        PropertyDocument propDoc = PropertyDocumentBuilder.forPropertyIdAndDatatype( propId, "dataTypeFoo" )
+                .withStatement(
+                        StatementBuilder
+                                .forSubjectAndProperty(propId, PropertyIdValueImpl.create("P1", "bar"))
+                                .build()
+                ).build();
+
+
+
+        processor.doPreProcessing();
+        processor.processItemDocument( itemDoc );
+        processor.processPropertyDocument( propDoc );
+        processor.doPostProcessing();
 
         this.assertCounter(counters, "qualifiers", 3);
         this.assertCounter(counters, "references", 4);
@@ -75,6 +90,10 @@ public class MetricProcessorTest extends TestCase {
         this.assertCounter(counters, "references.snaks.type.novalue", 2 );
         this.assertCounter(counters, "item.count", 1 );
         this.assertCounter(counters, "item.statements.total", 3 );
+        this.assertCounter(counters, "item.statements.avg", 3 );
+        this.assertCounter(counters, "property.count", 1 );
+        this.assertCounter(counters, "property.statements.total", 1 );
+        this.assertCounter(counters, "property.statements.avg", 1 );
     }
 
 }

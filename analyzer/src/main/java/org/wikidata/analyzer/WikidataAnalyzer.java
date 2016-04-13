@@ -152,6 +152,7 @@ public class WikidataAnalyzer {
                 WikidataAnalyzerProcessor processor = (WikidataAnalyzerProcessor) classObject.newInstance();
                 processor.setOutputDir( outputDir );
                 processor.setUp();
+                processor.doPreProcessing();
                 controller.registerEntityDocumentProcessor(
                         processor,
                         null,
@@ -178,6 +179,7 @@ public class WikidataAnalyzer {
 
         // Tear all the processors down
         for (WikidataAnalyzerProcessor processor : this.processorObjects) {
+            processor.doPostProcessing();
             processor.tearDown();
         }
 
