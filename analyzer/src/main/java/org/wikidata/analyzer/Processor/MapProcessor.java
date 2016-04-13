@@ -1,4 +1,4 @@
-package main.java.org.wikidata.analyzer.Processor;
+package org.wikidata.analyzer.Processor;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -55,7 +55,7 @@ public class MapProcessor extends WikidataAnalyzerProcessor {
         return success;
     }
 
-    public void populateGraphRelations() {
+    private void populateGraphRelations() {
         // Fill the list of graphRelations
         // The previous script actually generated graph data for ALL properties
         this.graphRelations.add("P17");// Country

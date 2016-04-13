@@ -1,4 +1,4 @@
-package main.java.org.wikidata.analyzer.Processor;
+package org.wikidata.analyzer.Processor;
 
 import org.wikidata.wdtk.datamodel.interfaces.*;
 
@@ -19,7 +19,7 @@ public class BadDateProcessor extends WikidataAnalyzerProcessor {
         super();
     }
 
-    public void overrideWriters( Writer writer1, Writer writer2 ) {
+    public void overrideWriters(Writer writer1, Writer writer2) {
         this.writer1 = writer1;
         this.writer2 = writer2;
         this.addHeadersToWriters();

@@ -1,4 +1,4 @@
-package main.java.org.wikidata.analyzer.Processor;
+package org.wikidata.analyzer.Processor;
 
 import com.google.common.collect.Iterators;
 import org.json.simple.JSONObject;
@@ -24,7 +24,7 @@ public class MetricProcessor extends WikidataAnalyzerProcessor {
         this.populateReferenceProperties();
     }
 
-    public void overrideCounters( Map<String, Long> counters ) {
+    public void overrideCounters(Map<String, Long> counters) {
         this.counters = counters;
     }
 

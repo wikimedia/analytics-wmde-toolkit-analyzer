@@ -1,4 +1,4 @@
-package main.java.org.wikidata.analyzer.Processor;
+package org.wikidata.analyzer.Processor;
 
 import org.json.simple.JSONObject;
 import org.wikidata.wdtk.datamodel.interfaces.*;
@@ -21,7 +21,7 @@ public class MonolingualTextProcessor extends WikidataAnalyzerProcessor {
         super();
     }
 
-    public void overrideCounters( Map<String, Long> counters ) {
+    public void overrideCounters(Map<String, Long> counters) {
         this.counters = counters;
     }
 

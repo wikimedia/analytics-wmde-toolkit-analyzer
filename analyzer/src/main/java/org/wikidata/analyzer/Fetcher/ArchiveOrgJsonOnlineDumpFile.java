@@ -1,4 +1,4 @@
-package main.java.org.wikidata.analyzer.Fetcher;
+package org.wikidata.analyzer.Fetcher;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,9 +17,9 @@ import java.io.InputStream;
  *
  * @author Addshore
  */
-public class ArchiveOrgJsonOnlineDumpFile extends WmfDumpFile implements MwDumpFile {
+class ArchiveOrgJsonOnlineDumpFile extends WmfDumpFile implements MwDumpFile {
 
-    static final Logger logger = LoggerFactory
+    private static final Logger logger = LoggerFactory
             .getLogger(ArchiveOrgJsonOnlineDumpFile.class);
 
     private final WebResourceFetcher webResourceFetcher;
@@ -40,9 +40,9 @@ public class ArchiveOrgJsonOnlineDumpFile extends WmfDumpFile implements MwDumpF
      *            the directory manager for the directory where dumps should be
      *            downloaded to
      */
-    public ArchiveOrgJsonOnlineDumpFile(String dateStamp, String projectName,
-                              WebResourceFetcher webResourceFetcher,
-                              DirectoryManager dumpfileDirectoryManager) {
+    ArchiveOrgJsonOnlineDumpFile(String dateStamp, String projectName,
+                                 WebResourceFetcher webResourceFetcher,
+                                 DirectoryManager dumpfileDirectoryManager) {
         super(dateStamp, projectName);
         this.webResourceFetcher = webResourceFetcher;
         this.dumpfileDirectoryManager = dumpfileDirectoryManager;

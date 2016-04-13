@@ -1,4 +1,4 @@
-package main.java.org.wikidata.analyzer.Fetcher;
+package org.wikidata.analyzer.Fetcher;
 
 import org.wikidata.wdtk.dumpfiles.MwDumpFile;
 import org.wikidata.wdtk.dumpfiles.MwLocalDumpFile;
@@ -21,7 +21,7 @@ import java.util.Map;
  */
 public class DumpFetcher {
 
-    protected File dataDirectory;
+    private File dataDirectory;
 
     public DumpFetcher(File dataDirectory) {
         this.dataDirectory = dataDirectory;

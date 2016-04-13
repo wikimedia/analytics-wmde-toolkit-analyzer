@@ -1,8 +1,9 @@
-package main.java.org.wikidata.analyzer;
+package org.wikidata.analyzer;
 
-import main.java.org.wikidata.analyzer.Fetcher.DumpDateFetcher;
-import main.java.org.wikidata.analyzer.Processor.*;
-import main.java.org.wikidata.analyzer.Fetcher.DumpFetcher;
+import org.wikidata.analyzer.Fetcher.DumpDateFetcher;
+import org.wikidata.analyzer.Fetcher.DumpFetcher;
+import org.wikidata.analyzer.Processor.NoisyProcessor;
+import org.wikidata.analyzer.Processor.WikidataAnalyzerProcessor;
 import org.wikidata.wdtk.dumpfiles.DumpProcessingController;
 import org.wikidata.wdtk.dumpfiles.MwDumpFile;
 

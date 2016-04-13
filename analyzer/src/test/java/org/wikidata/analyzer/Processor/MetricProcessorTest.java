@@ -1,7 +1,6 @@
-package test.java.org.wikidata.analyzer.Processor;
+package org.wikidata.analyzer.Processor;
 
 import junit.framework.TestCase;
-import main.java.org.wikidata.analyzer.Processor.MetricProcessor;
 import org.wikidata.wdtk.datamodel.helpers.*;
 import org.wikidata.wdtk.datamodel.implementation.DataObjectFactoryImpl;
 import org.wikidata.wdtk.datamodel.implementation.ItemIdValueImpl;

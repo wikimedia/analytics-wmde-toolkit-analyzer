@@ -1,4 +1,4 @@
-package main.java.org.wikidata.analyzer.Fetcher;
+package org.wikidata.analyzer.Fetcher;
 
 import org.wikidata.wdtk.util.WebResourceFetcherImpl;
 
@@ -10,7 +10,7 @@ import java.net.URL;
 /**
  * @author Addshore
  */
-public class RedirectFollowingWebResourceFetcherImpl extends WebResourceFetcherImpl {
+class RedirectFollowingWebResourceFetcherImpl extends WebResourceFetcherImpl {
 
     @Override
     public InputStream getInputStreamForUrl(String urlString)

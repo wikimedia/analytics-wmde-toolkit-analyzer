@@ -1,14 +1,12 @@
-package test.java.org.wikidata.analyzer.Processor;
+package org.wikidata.analyzer.Processor;
 
 import junit.framework.TestCase;
-import main.java.org.wikidata.analyzer.Processor.BadDateProcessor;
 import org.easymock.EasyMock;
 import org.wikidata.wdtk.datamodel.helpers.Datamodel;
 import org.wikidata.wdtk.datamodel.helpers.ItemDocumentBuilder;
 import org.wikidata.wdtk.datamodel.helpers.StatementBuilder;
 import org.wikidata.wdtk.datamodel.implementation.ItemIdValueImpl;
 import org.wikidata.wdtk.datamodel.implementation.PropertyIdValueImpl;
-import org.wikidata.wdtk.datamodel.interfaces.EntityDocumentProcessor;
 import org.wikidata.wdtk.datamodel.interfaces.ItemDocument;
 import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.TimeValue;
