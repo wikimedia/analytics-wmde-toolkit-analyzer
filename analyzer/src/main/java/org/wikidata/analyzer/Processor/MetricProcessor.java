@@ -12,7 +12,7 @@ import java.util.*;
  */
 public class MetricProcessor extends WikidataAnalyzerProcessor {
 
-    private Map<String, Long> counters = new HashMap<>();
+    private Map<String, Double> counters = new HashMap<>();
 
     private Map<String, String> wikimedias = new HashMap<>();
 
@@ -24,7 +24,7 @@ public class MetricProcessor extends WikidataAnalyzerProcessor {
         this.populateReferenceProperties();
     }
 
-    public void overrideCounters(Map<String, Long> counters) {
+    public void overrideCounters(Map<String, Double> counters) {
         this.counters = counters;
     }
 
@@ -356,14 +356,14 @@ public class MetricProcessor extends WikidataAnalyzerProcessor {
         this.increment(counter, 1);
     }
 
-    private void increment(String counter, int quantity) {
+    private void increment(String counter, double quantity) {
         this.initiateCounterIfNotReady(counter);
-        this.counters.put(counter, this.counters.get(counter) + (long) quantity);
+        this.counters.put(counter, this.counters.get(counter) + quantity);
     }
 
     private void initiateCounterIfNotReady(String counter) {
         if (!this.counters.containsKey(counter)) {
-            this.counters.put(counter, (long) 0);
+            this.counters.put(counter, (double) 0);
         }
     }
 

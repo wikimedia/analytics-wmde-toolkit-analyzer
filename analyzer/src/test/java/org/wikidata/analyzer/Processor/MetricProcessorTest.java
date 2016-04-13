@@ -18,13 +18,18 @@ import java.util.Map;
  */
 public class MetricProcessorTest extends TestCase {
 
-    private void assertCounter( Map<String, Long> counters, String counter, int expected ) {
+    private void assertCounter( Map<String, Double> counters, String counter, Double expected ) {
         assertTrue( "Assert counter name exists '" + counter + "'", counters.containsKey( counter ) );
-        assertEquals( "Assert counter '" + counter + "'value correct", (long)expected, (long)counters.get( counter ) );
+        assertEquals( "Assert counter '" + counter + "'value correct", expected, counters.get( counter ) );
+    }
+
+    private void assertCounter( Map<String, Double> counters, String counter, int expected ) {
+        assertTrue( "Assert counter name exists '" + counter + "'", counters.containsKey( counter ) );
+        assertEquals( "Assert counter '" + counter + "'value correct", (double)expected, counters.get( counter ) );
     }
 
     public void testProcessItemDocument() throws Exception {
-        Map<String, Long> counters = new HashMap<>();
+        Map<String, Double> counters = new HashMap<>();
         MetricProcessor processor = new MetricProcessor();
         processor.overrideCounters( counters );
 
@@ -59,24 +64,28 @@ public class MetricProcessorTest extends TestCase {
                 )
                 .withStatement(
                         StatementBuilder
-                        .forSubjectAndProperty(itemId, PropertyIdValueImpl.create("P100", "foo"))
-                        .build()
+                                .forSubjectAndProperty(itemId, PropertyIdValueImpl.create("P100", "foo"))
+                                .build()
                 )
                 .build();
 
-        PropertyIdValue propId = PropertyIdValueImpl.create("P166", "foo");
-        PropertyDocument propDoc = PropertyDocumentBuilder.forPropertyIdAndDatatype( propId, "dataTypeFoo" )
+        PropertyIdValue propIdOne = PropertyIdValueImpl.create("P166", "foo");
+        PropertyDocument propDocOne = PropertyDocumentBuilder.forPropertyIdAndDatatype( propIdOne, "dataTypeFoo" )
                 .withStatement(
                         StatementBuilder
-                                .forSubjectAndProperty(propId, PropertyIdValueImpl.create("P1", "bar"))
+                                .forSubjectAndProperty(propIdOne, PropertyIdValueImpl.create("P1", "bar"))
                                 .build()
                 ).build();
+
+        PropertyIdValue propIdTwo = PropertyIdValueImpl.create("P167", "foo");
+        PropertyDocument propDocTwo = PropertyDocumentBuilder.forPropertyIdAndDatatype( propIdTwo, "dataTypeFoo" ).build();
 
 
 
         processor.doPreProcessing();
         processor.processItemDocument( itemDoc );
-        processor.processPropertyDocument( propDoc );
+        processor.processPropertyDocument( propDocOne );
+        processor.processPropertyDocument( propDocTwo );
         processor.doPostProcessing();
 
         this.assertCounter(counters, "qualifiers", 3);
@@ -91,9 +100,9 @@ public class MetricProcessorTest extends TestCase {
         this.assertCounter(counters, "item.count", 1 );
         this.assertCounter(counters, "item.statements.total", 3 );
         this.assertCounter(counters, "item.statements.avg", 3 );
-        this.assertCounter(counters, "property.count", 1 );
+        this.assertCounter(counters, "property.count", 2 );
         this.assertCounter(counters, "property.statements.total", 1 );
-        this.assertCounter(counters, "property.statements.avg", 1 );
+        this.assertCounter(counters, "property.statements.avg", 0.5 );
     }
 
 }
