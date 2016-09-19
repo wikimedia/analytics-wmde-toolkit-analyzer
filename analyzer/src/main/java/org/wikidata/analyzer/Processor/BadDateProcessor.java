@@ -67,7 +67,7 @@ public class BadDateProcessor extends WikidataAnalyzerProcessor {
             Statement statement = statements.next();
             Snak snak = statement.getClaim().getMainSnak();
             if (snak instanceof ValueSnak) {
-                Value value = ((ValueSnak) snak).getValue();
+                Value value = snak.getValue();
                 if (value instanceof TimeValue) {
                     TimeValue timeValue = (TimeValue) value;
 
