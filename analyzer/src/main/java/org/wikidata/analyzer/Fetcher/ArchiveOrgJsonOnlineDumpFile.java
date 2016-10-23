@@ -93,27 +93,34 @@ class ArchiveOrgJsonOnlineDumpFile extends WmfDumpFile implements MwDumpFile {
         urls.add( "http://archive.org/download/wikidata-json-" + this.dateStamp + "/" + this.dateStamp + ".json.gz" );
 
         for( String urlString : urls ) {
-            logger.info("Downloading JSON dump file " + fileName + " from "
-                    + urlString + " ...");
+            try {
+                logger.info("Downloading JSON dump file " + fileName + " from "
+                        + urlString + " ...");
 
-            if (!isAvailable()) {
-                throw new IOException(
-                        "Dump file not available (yet). Aborting dump retrieval.");
-            }
+                if (!isAvailable()) {
+                    continue;
+                }
 
-            DirectoryManager dailyDirectoryManager = this.dumpfileDirectoryManager
-                    .getSubdirectoryManager(WmfDumpFile.getDumpFileDirectoryName(
-                            DumpContentType.JSON, this.dateStamp));
+                DirectoryManager dailyDirectoryManager = this.dumpfileDirectoryManager
+                        .getSubdirectoryManager(WmfDumpFile.getDumpFileDirectoryName(
+                                DumpContentType.JSON, this.dateStamp));
 
-            try (InputStream inputStream = webResourceFetcher
-                    .getInputStreamForUrl(urlString)) {
+                InputStream inputStream = webResourceFetcher
+                        .getInputStreamForUrl(urlString);
+
                 dailyDirectoryManager.createFileAtomic(fileName, inputStream);
+
+                this.isPrepared = true;
+
+                logger.info("... completed download of JSON dump file " + fileName
+                        + " from " + urlString);
+                return;
+            } catch (Exception ignored) {
             }
-
-            this.isPrepared = true;
-
-            logger.info("... completed download of JSON dump file " + fileName
-                    + " from " + urlString);
         }
+
+        throw new IOException(
+                "Dump file not available (yet). Aborting dump retrieval."
+        );
     }
 }
