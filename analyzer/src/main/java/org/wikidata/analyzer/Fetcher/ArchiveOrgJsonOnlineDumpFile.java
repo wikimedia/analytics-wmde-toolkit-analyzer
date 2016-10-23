@@ -11,6 +11,8 @@ import org.wikidata.wdtk.util.WebResourceFetcher;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Class to download dumps from archive.org
@@ -83,29 +85,35 @@ class ArchiveOrgJsonOnlineDumpFile extends WmfDumpFile implements MwDumpFile {
         String fileName = WmfDumpFile.getDumpFileName(DumpContentType.JSON,
                 this.projectName, this.dateStamp);
 
+        List<String> urls = new ArrayList<>();
+
         // Like http://archive.org/download/wikidata-json-20160104/wikidata-20160104-all.json.gz
-        String urlString =  "http://archive.org/download/wikidata-json-" + this.dateStamp + "/wikidata-" + this.dateStamp + "-all.json.gz";
+        urls.add( "http://archive.org/download/wikidata-json-" + this.dateStamp + "/wikidata-" + this.dateStamp + "-all.json.gz" );
+        // Like https://archive.org/download/wikidata-json-20141020/20141020.json.gz
+        urls.add( "http://archive.org/download/wikidata-json-" + this.dateStamp + "/" + this.dateStamp + ".json.gz" );
 
-        logger.info("Downloading JSON dump file " + fileName + " from "
-                + urlString + " ...");
+        for( String urlString : urls ) {
+            logger.info("Downloading JSON dump file " + fileName + " from "
+                    + urlString + " ...");
 
-        if (!isAvailable()) {
-            throw new IOException(
-                    "Dump file not available (yet). Aborting dump retrieval.");
+            if (!isAvailable()) {
+                throw new IOException(
+                        "Dump file not available (yet). Aborting dump retrieval.");
+            }
+
+            DirectoryManager dailyDirectoryManager = this.dumpfileDirectoryManager
+                    .getSubdirectoryManager(WmfDumpFile.getDumpFileDirectoryName(
+                            DumpContentType.JSON, this.dateStamp));
+
+            try (InputStream inputStream = webResourceFetcher
+                    .getInputStreamForUrl(urlString)) {
+                dailyDirectoryManager.createFileAtomic(fileName, inputStream);
+            }
+
+            this.isPrepared = true;
+
+            logger.info("... completed download of JSON dump file " + fileName
+                    + " from " + urlString);
         }
-
-        DirectoryManager dailyDirectoryManager = this.dumpfileDirectoryManager
-                .getSubdirectoryManager(WmfDumpFile.getDumpFileDirectoryName(
-                        DumpContentType.JSON, this.dateStamp));
-
-        try (InputStream inputStream = webResourceFetcher
-                .getInputStreamForUrl(urlString)) {
-            dailyDirectoryManager.createFileAtomic(fileName, inputStream);
-        }
-
-        this.isPrepared = true;
-
-        logger.info("... completed download of JSON dump file " + fileName
-                + " from " + urlString);
     }
 }

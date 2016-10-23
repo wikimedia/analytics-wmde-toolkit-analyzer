@@ -94,7 +94,7 @@ public class DumpFetcher {
             String dumpLocation = entry.getKey();
             MwDumpFile onlineDump = entry.getValue();
             try{
-                System.out.println("Looking for / downloading online dump from: " + dumpLocation);
+                System.out.println("Looking for & downloading online dump from: " + dumpLocation);
                 onlineDump.prepareDumpFile();
                 System.out.println("Using dump from: " + dumpLocation);
                 return onlineDump;
