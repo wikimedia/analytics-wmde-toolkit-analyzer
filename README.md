@@ -15,9 +15,9 @@ Code is written in a combination of:
 
 ** Run me using Java **
 
-    java -Xmx2g -jar ./target/toolkit-analyzer.jar BadDate Map ~/data --latest
+    java -Xmx2g -jar ./target/toolkit-analyzer.jar --processors BadDate --store ~/data --latest
     # or
-    java -Xmx2g -jar ./target/toolkit-analyzer.jar BadDate Map ~/data --date 20160808
+    java -Xmx2g -jar ./target/toolkit-analyzer.jar --processors BadDate --store ~/data --date 20161031
 
 ** Use my output **
 
