@@ -81,8 +81,12 @@ public class ExactValueQuantityProcessor extends WikidataAnalyzerProcessor {
                     this.increment("counters.noBound");
                 }
 
-                // number of values with no unit (unit is "1" or Q199)
-                if (quantityValue.getUnit().equals("1") || quantityValue.getUnit().equals("http://www.wikidata.org/entity/Q199")) {
+                /**
+                 * number of values with no unit
+                 * in the JSON dump this means units of value "1" or units pointing to Q199
+                 * the toolkit converts "1" to "" in JacksonInnerQuantity::getUnit
+                 */
+                if (quantityValue.getUnit().equals("") || quantityValue.getUnit().equals("http://www.wikidata.org/entity/Q199")) {
                     this.increment("counters.noUnit");
                 }
 
