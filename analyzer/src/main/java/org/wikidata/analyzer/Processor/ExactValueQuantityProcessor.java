@@ -72,13 +72,15 @@ public class ExactValueQuantityProcessor extends WikidataAnalyzerProcessor {
             Value value = snak.getValue();
             if (value instanceof QuantityValue) {
                 QuantityValue quantityValue = (QuantityValue) value;
+                String propertyId = snak.getPropertyId().getId();
 
-                this.increment("property." + snak.getPropertyId().getId());
-                this.increment("type." + type + "." + snak.getPropertyId().getId());
+                this.increment("property." + propertyId);
+                this.increment("type." + type + "." + propertyId);
 
                 // number of values with +/-0 bounds (upper bound == lower bound)
                 if (Objects.equals(quantityValue.getUpperBound(), quantityValue.getLowerBound())) {
                     this.increment("counters.noBound");
+                    this.increment("propertyCounters.noBound." + propertyId);
                 }
 
                 /**
@@ -88,11 +90,13 @@ public class ExactValueQuantityProcessor extends WikidataAnalyzerProcessor {
                  */
                 if (quantityValue.getUnit().equals("") || quantityValue.getUnit().equals("http://www.wikidata.org/entity/Q199")) {
                     this.increment("counters.noUnit");
+                    this.increment("propertyCounters.noUnit." + propertyId);
                 }
 
                 // number of values with no decimal point (i.e. whole numbers)
                 if (quantityValue.getNumericValue().scale() <= 0) {
                     this.increment("counters.noDecimal");
+                    this.increment("propertyCounters.noDecimal." + propertyId);
                 }
 
             }
