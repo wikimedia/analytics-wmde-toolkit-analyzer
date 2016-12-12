@@ -73,8 +73,8 @@ public class ExactValueQuantityProcessor extends WikidataAnalyzerProcessor {
             if (value instanceof QuantityValue) {
                 QuantityValue quantityValue = (QuantityValue) value;
 
-                this.increment("property." + snak.getPropertyId().toString());
-                this.increment("type." + type + "." + snak.getPropertyId().toString());
+                this.increment("property." + snak.getPropertyId().getId());
+                this.increment("type." + type + "." + snak.getPropertyId().getId());
 
                 // number of values with +/-0 bounds (upper bound == lower bound)
                 if (Objects.equals(quantityValue.getUpperBound(), quantityValue.getLowerBound())) {
