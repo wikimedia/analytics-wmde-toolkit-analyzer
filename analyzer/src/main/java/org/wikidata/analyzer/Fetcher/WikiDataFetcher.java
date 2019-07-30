@@ -26,7 +26,7 @@ public abstract class WikiDataFetcher {
 
     JSONObject queryDataFromWikidata(String querySelect) {
 
-        String endpoint = "https://query.wikidata.org/sparql";
+        String endpoint = "http://wdqs1005.eqiad.wmnet/sparql";
         String url = null;
         try {
             url = endpoint + "?query=" + URLEncoder.encode(querySelect, "UTF-8");
