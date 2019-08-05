@@ -78,6 +78,14 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <!-- Needed to overcome URLClassLoader issue with Java update -->
+                    <useSystemClassLoader>false</useSystemClassLoader>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 

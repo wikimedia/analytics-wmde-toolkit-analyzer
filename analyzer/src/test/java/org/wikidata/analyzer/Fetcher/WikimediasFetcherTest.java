@@ -1,6 +1,8 @@
 package org.wikidata.analyzer.Fetcher;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
+import org.junit.Ignore;
+import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
@@ -10,8 +12,10 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class WikimediasFetcherTest extends TestCase {
+public class WikimediasFetcherTest {
 
+    @Test
+    @Ignore("Targetting production service URL does not work in tests")
     public void testFetchingWikis() {
         File tempdir = null;
         try {

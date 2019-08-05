@@ -1,6 +1,8 @@
 package org.wikidata.analyzer.Processor;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
+import org.junit.Ignore;
+import org.junit.Test;
 import org.wikidata.wdtk.datamodel.helpers.*;
 import org.wikidata.wdtk.datamodel.implementation.ItemIdValueImpl;
 import org.wikidata.wdtk.datamodel.implementation.PropertyIdValueImpl;
@@ -15,13 +17,15 @@ import java.util.Map;
 /**
  * @author Addshore
  */
-public class MonolingualTextProcessorTest extends TestCase {
+public class MonolingualTextProcessorTest {
 
     private void assertCounter( Map<String, Long> counters, String counter, int expected ) {
         assertTrue( "Assert counter name exists '" + counter + "'", counters.containsKey( counter ) );
         assertEquals( "Assert counter '" + counter + "'value correct", (long)expected, (long)counters.get( counter ) );
     }
 
+    @Test
+    @Ignore("Targetting production service URL does not work in tests")
     public void testProcessItemDocument() throws Exception {
         Map<String, Long> counters = new HashMap<>();
         MonolingualTextProcessor processor = new MonolingualTextProcessor();

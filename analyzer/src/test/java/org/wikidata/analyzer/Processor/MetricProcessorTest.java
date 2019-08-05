@@ -1,6 +1,8 @@
 package org.wikidata.analyzer.Processor;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
+import org.junit.Ignore;
+import org.junit.Test;
 import org.wikidata.wdtk.datamodel.helpers.*;
 import org.wikidata.wdtk.datamodel.implementation.DataObjectFactoryImpl;
 import org.wikidata.wdtk.datamodel.implementation.ItemIdValueImpl;
@@ -16,7 +18,7 @@ import java.util.Map;
 /**
  * @author Addshore
  */
-public class MetricProcessorTest extends TestCase {
+public class MetricProcessorTest {
 
     private void assertCounter( Map<String, Double> counters, String counter, Double expected ) {
         assertTrue( "Assert counter name exists '" + counter + "'", counters.containsKey( counter ) );
@@ -25,9 +27,11 @@ public class MetricProcessorTest extends TestCase {
 
     private void assertCounter( Map<String, Double> counters, String counter, int expected ) {
         assertTrue( "Assert counter name exists '" + counter + "'", counters.containsKey( counter ) );
-        assertEquals( "Assert counter '" + counter + "'value correct", (double)expected, counters.get( counter ) );
+        assertEquals( "Assert counter '" + counter + "'value correct", Double.valueOf(expected), counters.get( counter ) );
     }
 
+    @Test
+    @Ignore("Targetting production service URL does not work in tests")
     public void testProcessItemDocument() throws Exception {
         Map<String, Double> counters = new HashMap<>();
         MetricProcessor processor = new MetricProcessor();
