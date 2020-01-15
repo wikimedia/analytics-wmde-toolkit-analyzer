@@ -126,7 +126,7 @@ for size in settings.keys() :
 	print badCoordCount, "bad coordinates"
 
 	f = open(os.path.join(outputDirectory, 'map_' + size + '.png'), 'wb')
-	w = png.Writer(settings[size]['x'], settings[size]['y'])
+	w = png.Writer(settings[size]['x'], settings[size]['y'], greyscale=False)
 	w.write(f, p)
 	f.close()
 	print size, "Map saved..."
