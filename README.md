@@ -11,7 +11,7 @@ Code is written in a combination of:
 
  ** Package me using Maven **
 
-    mvn package
+    ../mvnw package
 
 ** Run me using Java **
 
