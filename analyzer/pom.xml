@@ -6,6 +6,12 @@
     <groupId>org.wikidata.analyzer</groupId>
     <name>Data Analyzer for wikidata-analysis</name>
 
+    <properties>
+        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+        <sonar.login>${env.SONAR_API_KEY}</sonar.login>
+        <sonar.organization>wmftest</sonar.organization>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.wikidata.wdtk</groupId>
@@ -41,6 +47,15 @@
     </dependencies>
 
     <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.sonarsource.scanner.maven</groupId>
+                    <artifactId>sonar-maven-plugin</artifactId>
+                    <version>3.8.0.2131</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
